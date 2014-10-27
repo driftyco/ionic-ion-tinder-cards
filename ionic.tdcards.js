@@ -266,14 +266,18 @@
             el: el,
             onPartialSwipe: function(amt) {
               swipeCards.partial(amt);
-              $timeout(function() {
-                $scope.leftTextOpacity = {
-                  'opacity': amt > 0 ? amt : 0
-                };
-                $scope.rightTextOpacity = {
-                  'opacity': amt < 0 ? Math.abs(amt) : 0
-                };
 
+              var leftText = el.querySelector('.no-text');
+              var rightText = el.querySelector('.yes-text');
+              if (amt < 0) {
+                leftText.style.opacity = Math.abs(amt) + 0.5;
+                rightText.style.opacity = 0;
+              } else {
+                leftText.style.opacity = 0;
+                rightText.style.opacity = amt + 0.5;
+              }
+
+              $timeout(function() {
                 $scope.onPartialSwipe({amt: amt});
               });
             },
@@ -293,8 +297,10 @@
               });
             },
             onSnapBack: function(startX, startY, startRotation) {
-              var leftText = el.querySelector('.yes-text');
-              var rightText = el.querySelector('.no-text');
+              var leftText = el.querySelector('.no-text');
+              var rightText = el.querySelector('.yes-text');
+              rightText.style.opacity = 0;
+              leftText.style.opacity = 0;
 
               var animation = collide.animation({
                 // 'linear|ease|ease-in|ease-out|ease-in-out|cubic-bezer(x1,y1,x2,y2)',
@@ -315,8 +321,6 @@
               .on('step', function(v) {
                 //Have the element spring over 400px
                 el.style.transform = el.style.webkitTransform = 'translate3d(' + (startX - startX*v) + 'px, ' + (startY - startY*v) + 'px, 0) rotate(' + (startRotation - startRotation*v) + 'rad)';
-                rightText.style.opacity = Math.max(rightText.style.opacity - rightText.style.opacity * v, 0);
-                leftText.style.opacity = Math.max(leftText.style.opacity - leftText.style.opacity * v, 0);
               })
               .start();
               /*
