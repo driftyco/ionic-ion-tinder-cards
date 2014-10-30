@@ -132,6 +132,9 @@
         return;
       }
 
+      // Decide whether to treat this as a swipe left or a swipe right
+      this.swipe(this.thresholdAmount);
+
       var angle = Math.atan(e.gesture.deltaX / e.gesture.deltaY);
       console.log('Finishing at angle', angle, 'and velocity', e.gesture.velocityX, e.gesture.velocityY);
 
@@ -251,8 +254,8 @@
       require: '^tdCards',
       transclude: true,
       scope: {
-        onSwipeLeft: '&',
-        onSwipeRipe: '&',
+        onSwipeCardLeft: '&',
+        onSwipeCardRight: '&',
         onPartialSwipe: '&',
         onSnapBack: '&',
         onDestroy: '&'
@@ -264,6 +267,17 @@
           // Instantiate our card view
           var swipeableCard = new SwipeableCardView({
             el: el,
+            swipe: function(amt) {
+              if (amt < 0) {
+                $timeout(function() {
+                  swipeableCard.onSwipeCardLeft();
+                });
+              } else {
+                $timeout(function() {
+                  swipeableCard.onSwipeCardRight();
+                });
+              }
+            },
             onPartialSwipe: function(amt) {
               swipeCards.partial(amt);
 
@@ -281,14 +295,14 @@
                 $scope.onPartialSwipe({amt: amt});
               });
             },
-            onSwipeRight: function() {
+            onSwipeCardRight: function() {
               $timeout(function() {
-                $scope.onSwipeRight();
+                $scope.onSwipeCardRight();
               });
             },
-            onSwipeLeft: function() {
+            onSwipeCardLeft: function() {
               $timeout(function() {
-                $scope.onSwipeLeft();
+                $scope.onSwipeCardLeft();
               });
             },
             onDestroy: function() {
