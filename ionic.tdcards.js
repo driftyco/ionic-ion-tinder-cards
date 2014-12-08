@@ -367,13 +367,20 @@
 
         this.partial = function(amt) {
           cards = $element[0].querySelectorAll('td-card');
+
+          if (cards.length === 0) return;
+
           firstCard = cards[0];
           secondCard = cards[1];
           thirdCard = cards[2];
-          if(!secondCard) { return; }
 
-          bringCardUp(secondCard, amt, 4);
-          bringCardUp(thirdCard, amt, 8);
+          if (secondCard !== undefined) {
+              bringCardUp(secondCard, amt, 4);
+          }
+
+          if (thirdCard !== undefined) {
+              bringCardUp(thirdCard, amt, 8);
+          }
         };
       }
     }
