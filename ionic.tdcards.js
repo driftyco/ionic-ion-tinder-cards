@@ -159,6 +159,15 @@
 
       // Trigger destroy after card has swiped out
       setTimeout(function() {
+        //if direction swipe is right call onSwipeRight()
+        if(dir === 1){
+          self.onSwipeRight()
+        }
+        // if direction swipe is left, call on Swipe left
+        else if (dir === -1){
+          self.onSwipeLeft()
+        }
+        
         self.onDestroy && self.onDestroy();
       }, duration * 1000);
     },
