@@ -253,6 +253,8 @@
       compile: function(element, attr) {
         return function($scope, $element, $attr, swipeCards) {
           var el = $element[0];
+          // Force hardware acceleration for animation - better performance on first touch
+          el.style.transform = el.style.webkitTransform = 'translate3d(0px, 0px, 0px)';
 
           // Instantiate our card view
           var swipeableCard = new SwipeableCardView({
