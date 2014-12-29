@@ -11,7 +11,10 @@ Include `ionic.tdcards.js` after the rest of your Ionic and Angular includes. Th
 
 ```html
 <td-cards>
-  <td-card ng-repeat="card in cards" on-destroy="cardDestroyed($index)" on-swipe="cardSwiped($index)">
+  <td-card ng-repeat="card in cards"
+       on-destroy="cardDestroyed($index)"
+       on-swipe-right="cardSwipedRight($index)"
+       on-swipe-left="cardSwipedleft($index)">
     Card content here
   </td-card>
 </td-cards>
@@ -29,8 +32,15 @@ $scope.cardDestroyed = function(index) {
   $scope.cards.splice(index, 1);
 };
 
-$scope.cardSwiped = function(index) {
+$scope.cardSwipedRight = function(index) {
   var newCard = // new card data
+  console.log('card swiped right');
+  $scope.cards.push(newCard);
+};
+
+$scope.cardSwipedLeft = function(index) {
+  var newCard = // new card data
+  console.log('card swiped left');
   $scope.cards.push(newCard);
 };
 ```

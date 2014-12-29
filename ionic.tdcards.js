@@ -157,8 +157,11 @@
 
       if (targetX > 0) {
         self.onSwipeRight && self.onSwipeRight();
+        self.showDragEndRight && self.el.find(self.showDragEndRight).show();
+
       } else {
         self.onSwipeLeft && self.onSwipeLeft();
+        self.showDragEndLeft && self.el.find(self.showDragEndLeft).show();
       }
 
       // Trigger destroy after card has swiped out
@@ -248,6 +251,8 @@
       require: '^tdCards',
       transclude: true,
       scope: {
+        showDragEndLeft: '@',
+        showDragEndRight: '@',
         onSwipeLeft: '&',
         onSwipeRight: '&',
         onPartialSwipe: '&',
