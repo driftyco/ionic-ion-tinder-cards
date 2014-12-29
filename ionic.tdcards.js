@@ -155,7 +155,11 @@
         self.el.style.transition = self.el.style.webkitTransition = 'all ' + duration + 's ease-in-out';
       });
 
-      //this.onSwipe && this.onSwipe();
+      if (targetX > 0) {
+        self.onSwipeRight && self.onSwipeRight();
+      } else {
+        self.onSwipeLeft && self.onSwipeLeft();
+      }
 
       // Trigger destroy after card has swiped out
       setTimeout(function() {
