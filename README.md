@@ -12,6 +12,8 @@ Include `ionic.tdcards.js` after the rest of your Ionic and Angular includes. Th
 ```html
 <td-cards>
   <td-card ng-repeat="card in cards"
+       show-partial-swipe-left=".item-like"
+       show-partial-swipe-right=".item-dislike"
        on-destroy="cardDestroyed($index)"
        on-swipe-right="cardSwipedRight($index)"
        on-swipe-left="cardSwipedleft($index)">
@@ -45,5 +47,11 @@ $scope.cardSwipedLeft = function(index) {
 };
 ```
 
+### show-partial-swipe
 
+Is a jQuery selector for change opacity the element when drag end to right or left.
+
+```html
+    <script src="lib/jquery/dist/jquery.min.js"></script>
+```
 
