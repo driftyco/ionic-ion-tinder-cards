@@ -155,17 +155,15 @@
         self.el.style.transition = self.el.style.webkitTransition = 'all ' + duration + 's ease-in-out';
       });
 
-      if (targetX > 0) {
-        self.onSwipeRight && self.onSwipeRight();
-        self.showDragEndRight && self.el.find(self.showDragEndRight).show();
-
-      } else {
-        self.onSwipeLeft && self.onSwipeLeft();
-        self.showDragEndLeft && self.el.find(self.showDragEndLeft).show();
-      }
-
       // Trigger destroy after card has swiped out
       setTimeout(function() {
+        if (dir === 1) {
+          self.onSwipeRight && self.onSwipeRight();
+
+        } else if (dir === -1) {
+          self.onSwipeLeft && self.onSwipeLeft();
+        }
+
         self.onDestroy && self.onDestroy();
       }, duration * 1000);
     },
@@ -262,6 +260,9 @@
           compile: function(element, attr) {
             return function($scope, $element, $attr, swipeCards) {
               var el = $element[0];
+              // Force hardware acceleration for animation - better performance on first touch
+              el.style.transform = el.style.webkitTransform = 'translate3d(0px, 0px, 0px)';
+
               var psLeft = $scope.showPartialSwipeLeft ? $element.find($scope.showPartialSwipeLeft) : null;
               var psRight = $scope.showPartialSwipeRight ? $element.find($scope.showPartialSwipeRight) : null;
 
@@ -325,6 +326,9 @@
                         leftText.style.opacity = Math.max(leftText.style.opacity - leftText.style.opacity * v, 0);
                       })
                       .start();
+                  $timeout(function() {
+                    $scope.onSnapBack();
+                  });
                   /*
                    animateSpringViaCss(el, 0, 0.5, 50, 700, 10, function (x) {
                    return el.style.transform = el.style.webkitTransform = 'translate3d(' + x + 'px,0,0)';
@@ -398,7 +402,7 @@
             $rootScope.$emit('tdCard.pop', isAnimated);
           },
           getSwipebleCard: function($scope) {
-            return $scope.$parent.swipeCard;
+            return $scope.swipeCard;
           }
         }
       }]);
