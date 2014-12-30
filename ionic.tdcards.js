@@ -366,14 +366,13 @@
         };
 
         this.partial = function(amt) {
-          cards = $element[0].querySelectorAll('td-card');
-          firstCard = cards[0];
-          secondCard = cards[1];
-          thirdCard = cards[2];
-          if(!secondCard) { return; }
+          var i = 0, length = 0;
 
-          bringCardUp(secondCard, amt, 4);
-          bringCardUp(thirdCard, amt, 8);
+          cards = $element[0].querySelectorAll('td-card');
+          length = cards.length;
+          for (i = 1; i < length; i += 1) {
+            bringCardUp(cards[i], amt, 4 * i);
+          }
         };
       }
     }
