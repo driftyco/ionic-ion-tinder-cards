@@ -249,8 +249,8 @@
           require: '^tdCards',
           transclude: true,
           scope: {
-            showPartialSwipeLeft: '@',
-            showPartialSwipeRight: '@',
+            textLeft: '@',
+            textRight: '@',
             onSwipeLeft: '&',
             onSwipeRight: '&',
             onPartialSwipe: '&',
@@ -263,8 +263,8 @@
               // Force hardware acceleration for animation - better performance on first touch
               el.style.transform = el.style.webkitTransform = 'translate3d(0px, 0px, 0px)';
 
-              var psLeft = $scope.showPartialSwipeLeft ? $element.find($scope.showPartialSwipeLeft) : null;
-              var psRight = $scope.showPartialSwipeRight ? $element.find($scope.showPartialSwipeRight) : null;
+              var leftText = $scope.textLeft ? el.querySelector($scope.textLeft) : null;
+              var rightText = $scope.textRight ? el.querySelector($scope.textRight) : null;
 
               // Instantiate our card view
               var swipeableCard = new SwipeableCardView({
@@ -275,11 +275,11 @@
                     $scope.leftTextOpacity = {
                       'opacity': amt > 0 ? amt : 0
                     };
-                    psLeft.css('opacity', $scope.leftTextOpacity.opacity);
                     $scope.rightTextOpacity = {
                       'opacity': amt < 0 ? Math.abs(amt) : 0
                     };
-                    psRight.css('opacity', $scope.rightTextOpacity.opacity);
+                    leftText && (leftText.style.opacity = $scope.leftTextOpacity.opacity);
+                    rightText && (rightText.style.opacity = $scope.rightTextOpacity.opacity);
 
                     $scope.onPartialSwipe({amt: amt});
                   });
@@ -300,8 +300,6 @@
                   });
                 },
                 onSnapBack: function(startX, startY, startRotation) {
-                  var leftText = el.querySelector('.yes-text');
-                  var rightText = el.querySelector('.no-text');
 
                   var animation = collide.animation({
                     // 'linear|ease|ease-in|ease-out|ease-in-out|cubic-bezer(x1,y1,x2,y2)',
@@ -322,8 +320,15 @@
                       .on('step', function(v) {
                         //Have the element spring over 400px
                         el.style.transform = el.style.webkitTransform = 'translate3d(' + (startX - startX*v) + 'px, ' + (startY - startY*v) + 'px, 0) rotate(' + (startRotation - startRotation*v) + 'rad)';
-                        rightText.style.opacity = Math.max(rightText.style.opacity - rightText.style.opacity * v, 0);
-                        leftText.style.opacity = Math.max(leftText.style.opacity - leftText.style.opacity * v, 0);
+
+                        if (rightText) {
+                          var oRight = rightText.style.opacity;
+                          rightText.style.opacity = Math.max(oRight - oRight * v, 0);
+                        }
+                        if (leftText) {
+                          var oLeft = leftText.style.opacity;
+                          leftText.style.opacity = Math.max(oLeft - oLeft * v, 0);
+                        }
                       })
                       .start();
                   $timeout(function() {
