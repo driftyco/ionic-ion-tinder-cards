@@ -365,8 +365,10 @@
               }) 
 
               .on('step', function(v) {
+                var xPos = startX - startX*v;
+                swipeCards.partial(xPos / (swipeableCard.parentWidth / 2));
                 //Have the element spring over 400px
-                el.style.transform = el.style.webkitTransform = 'translate3d(' + (startX - startX*v) + 'px, ' + (startY - startY*v) + 'px, 0) rotate(' + (startRotation - startRotation*v) + 'rad)';
+                el.style.transform = el.style.webkitTransform = 'translate3d(' + xPos + 'px, ' + (startY - startY*v) + 'px, 0) rotate(' + (startRotation - startRotation*v) + 'rad)';
                 if (rightText) rightText.style.opacity = 0;
                 if (leftText) leftText.style.opacity = 0;
               })
