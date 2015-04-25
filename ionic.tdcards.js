@@ -211,7 +211,12 @@
       this.rotationDirection = -1;
     },
 
+    isDragDisabled: function() { // Can be overriden
+      return false;
+    },
+
     _doDragStart: function(e) {
+      if (this.isDragDisabled()) return;
       e.preventDefault();
       var width = this.el.offsetWidth;
       var point = window.innerWidth / 2 + this.rotationDirection * (width / 2)
@@ -221,6 +226,7 @@
     },
 
     _doDrag: function(e) {
+      if (this.isDragDisabled()) return;
       e.preventDefault();
 
       var o = e.gesture.deltaX / -1000;
@@ -241,6 +247,7 @@
       });
     },
     _doDragEnd: function(e) {
+      if (this.isDragDisabled()) return;
       this.transitionOut(e);
     }
   });
@@ -279,7 +286,8 @@
         onTransitionOut: '&',
         onPartialSwipe: '&',
         onSnapBack: '&',
-        onDestroy: '&'
+        onDestroy: '&',
+        dragDisabled: '&'
       },
       compile: function(element, attr) {
         return function($scope, $element, $attr, swipeCards) {
@@ -295,6 +303,9 @@
             el: el,
             leftText: leftText,
             rightText: rightText,
+            isDragDisabled: function() {
+              return $scope.dragDisabled();
+            },
             onPartialSwipe: function(amt) {
               swipeCards.partial(amt);
               var self = this;
