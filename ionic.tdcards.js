@@ -396,9 +396,12 @@
       template: '<div class="td-cards" ng-transclude></div>',
       transclude: true,
       scope: {
-        maxStackSize: '=' // Max visible number of cards
+        maxStackSize: '=', // Max visible number of cards
+        cardPixelOffset: '=' // Offset of each card
       },
       controller: ['$scope', '$element', function($scope, $element) {
+        var PIXEL_OFFSET = $scope.cardPixelOffset || 4;
+
         var cards;
         var firstCard, secondCard, thirdCard;
 
@@ -414,7 +417,7 @@
             if(!card) continue;
             if(i > 0) {
               var cardOffsetIndex = ($scope.maxStackSize && ($scope.maxStackSize - 1) < i) ? $scope.maxStackSize - 1 : i;
-              card.style.transform = card.style.webkitTransform = 'translate3d(0, ' + (cardOffsetIndex * 4) + 'px, 0)';
+              card.style.transform = card.style.webkitTransform = 'translate3d(0, ' + (cardOffsetIndex * PIXEL_OFFSET) + 'px, 0)';
             }
             card.style.zIndex = (existingCards.length - i);
           }
@@ -427,7 +430,7 @@
         var bringCardUp = function(card, amt, max) {
           var position, newTop;
           position = card.style.transform || card.style.webkitTransform;
-          newTop = Math.max(0, Math.min(max, max - (max * Math.abs(amt))));
+          newTop = Math.max(0, Math.max(max - PIXEL_OFFSET, max - (PIXEL_OFFSET * Math.abs(amt))));
           card.style.transform = card.style.webkitTransform = 'translate3d(0, ' + newTop + 'px, 0)';
         };
 
@@ -437,8 +440,8 @@
           secondCard = cards.length > 2 && cards[1];
           thirdCard = cards.length > 3 && cards[2];
 
-          secondCard && bringCardUp(secondCard, amt, 4);
-          thirdCard && bringCardUp(thirdCard, amt, 8);
+          secondCard && bringCardUp(secondCard, amt, PIXEL_OFFSET);
+          thirdCard && bringCardUp(thirdCard, amt, PIXEL_OFFSET * 2);
         };
       }]
     }
