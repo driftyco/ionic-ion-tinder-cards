@@ -395,7 +395,9 @@
       restrict: 'E',
       template: '<div class="td-cards" ng-transclude></div>',
       transclude: true,
-      scope: {},
+      scope: {
+        maxStackSize: '=' // Max visible number of cards
+      },
       controller: ['$scope', '$element', function($scope, $element) {
         var cards;
         var firstCard, secondCard, thirdCard;
@@ -411,7 +413,8 @@
             card = existingCards[i];
             if(!card) continue;
             if(i > 0) {
-              card.style.transform = card.style.webkitTransform = 'translate3d(0, ' + (i * 4) + 'px, 0)';
+              var cardOffsetIndex = ($scope.maxStackSize && ($scope.maxStackSize - 1) < i) ? $scope.maxStackSize - 1 : i;
+              card.style.transform = card.style.webkitTransform = 'translate3d(0, ' + (cardOffsetIndex * 4) + 'px, 0)';
             }
             card.style.zIndex = (existingCards.length - i);
           }
