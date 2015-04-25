@@ -439,8 +439,8 @@
         this.partial = function(amt) {
           cards = $element[0].querySelectorAll('td-card');
           firstCard = cards[0];
-          secondCard = cards.length > 2 && cards[1];
-          thirdCard = cards.length > 3 && cards[2];
+          secondCard = cards.length >= 2 && cards[1];
+          thirdCard = cards.length >= 3 && cards[2];
 
           secondCard && bringCardUp(secondCard, amt, PIXEL_OFFSET);
           thirdCard && bringCardUp(thirdCard, amt, PIXEL_OFFSET * 2);
