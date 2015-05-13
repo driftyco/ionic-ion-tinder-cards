@@ -187,7 +187,7 @@
         }
         */
         ionic.requestAnimationFrame(function() { self._doDragStart(e) });
-      }, this.el);
+      }, this.el, { swipe_velocity: 0.0 });
 
       ionic.onGesture('drag', function(e) {
         ionic.requestAnimationFrame(function() { self._doDrag(e) });
