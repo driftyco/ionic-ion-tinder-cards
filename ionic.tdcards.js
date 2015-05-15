@@ -116,7 +116,7 @@
     swipe: function() {
       this.transitionOut();
     },
-    
+
     /**
      * Snap the card back to its original position
      */
@@ -125,7 +125,6 @@
     },
 
     isUnderThreshold: function() {
-      //return true;
       return Math.abs(this.thresholdAmount) < 0.4;
     },
     /**
@@ -140,7 +139,7 @@
       }
 
       self.onTransitionOut(self.thresholdAmount);
-      
+
       var angle = Math.atan(e.gesture.deltaX / e.gesture.deltaY);
 
       var dir = this.thresholdAmount < 0 ? -1 : 1;
@@ -155,16 +154,14 @@
       var targetY = targetX / Math.tan(angle);
 
       // Fly out
-      var rotateTo = this.rotationAngle;//(this.rotationAngle this.rotationDirection * 0.2));// || (Math.random() * 0.4);
+      var rotateTo = this.rotationAngle;
 
       var duration = 0.3 - Math.min(Math.max(Math.abs(e.gesture.velocityX)/10, 0.05), 0.2);
-      
+
       ionic.requestAnimationFrame(function() {
         self.el.style.transform = self.el.style.webkitTransform = 'translate3d(' + targetX + 'px, ' + targetY + 'px,0) rotate(' + self.rotationAngle + 'rad)';
         self.el.style.transition = self.el.style.webkitTransition = 'all ' + duration + 's ease-in-out';
       });
-
-      //this.onSwipe && this.onSwipe();
 
       // Trigger destroy after card has swiped out
       setTimeout(function() {
@@ -178,25 +175,17 @@
     bindEvents: function() {
       var self = this;
       ionic.onGesture('dragstart', function(e) {
-        /*
-        var cx = window.innerWidth / 2;
-        if(e.gesture.touches[0].pageX < cx) {
-          self._transformOriginRight();
-        } else {
-          self._transformOriginLeft();
-        }
-        */
-        ionic.requestAnimationFrame(function() { self._doDragStart(e) });
+        ionic.requestAnimationFrame(function() { self._doDragStart(e); });
       }, this.el);
 
       ionic.onGesture('drag', function(e) {
-        ionic.requestAnimationFrame(function() { self._doDrag(e) });
+        ionic.requestAnimationFrame(function() { self._doDrag(e); });
         // Indicate we want to stop parents from using this
         e.gesture.srcEvent.preventDefault();
       }, this.el);
 
       ionic.onGesture('dragend', function(e) {
-        ionic.requestAnimationFrame(function() { self._doDragEnd(e) });
+        ionic.requestAnimationFrame(function() { self._doDragEnd(e); });
       }, this.el);
     },
 
@@ -214,8 +203,8 @@
     _doDragStart: function(e) {
       e.preventDefault();
       var width = this.el.offsetWidth;
-      var point = window.innerWidth / 2 + this.rotationDirection * (width / 2)
-      var distance = Math.abs(point - e.gesture.touches[0].pageX);// - window.innerWidth/2);
+      var point = window.innerWidth / 2 + this.rotationDirection * (width / 2);
+      var distance = Math.abs(point - e.gesture.touches[0].pageX);
 
       this.touchDistance = distance * 10;
     },
@@ -286,7 +275,7 @@
           var el = $element[0];
           var leftText = el.querySelector('.no-text');
           var rightText = el.querySelector('.yes-text');
-          
+
           // Force hardware acceleration for animation - better performance on first touch
           el.style.transform = el.style.webkitTransform = 'translate3d(0px, 0px, 0px)';
 
@@ -349,9 +338,6 @@
               var rightText = el.querySelector('.no-text');
 
               var animation = collide.animation({
-                // 'linear|ease|ease-in|ease-out|ease-in-out|cubic-bezer(x1,y1,x2,y2)',
-                // or function(t, duration),
-                // or a dynamics configuration (see below)
                 duration: 500,
                 percent: 0,
                 reverse: false
@@ -362,10 +348,10 @@
                 frequency: 15,
                 friction: 250,
                 initialForce: false
-              }) 
+              })
 
               .on('step', function(v) {
-                //Have the element spring over 400px
+                // Have the element spring over 400px
                 el.style.transform = el.style.webkitTransform = 'translate3d(' + (startX - startX*v) + 'px, ' + (startY - startY*v) + 'px, 0) rotate(' + (startRotation - startRotation*v) + 'rad)';
                 if (rightText) rightText.style.opacity = 0;
                 if (leftText) leftText.style.opacity = 0;
@@ -375,19 +361,12 @@
               $timeout(function() {
                 $scope.onSnapBack();
               });
-
-              /*
-              animateSpringViaCss(el, 0, 0.5, 50, 700, 10, function (x) {
-                return el.style.transform = el.style.webkitTransform = 'translate3d(' + x + 'px,0,0)';
-              });
-              */
-            },
+            }
           });
           $scope.$parent.swipeCard = swipeableCard;
-
-        }
+        };
       }
-    }
+    };
   }])
 
   .directive('tdCards', ['$rootScope', '$timeout', function($rootScope, $timeout) {
@@ -438,7 +417,7 @@
           thirdCard && bringCardUp(thirdCard, amt, 8);
         };
       }]
-    }
+    };
   }])
 
   .factory('TDCardDelegate', ['$rootScope', function($rootScope) {
@@ -449,7 +428,7 @@
       getSwipeableCard: function($scope) {
         return $scope.swipeCard;
       }
-    }
+    };
   }]);
 
 })(window.ionic);
