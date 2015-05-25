@@ -395,7 +395,9 @@
       restrict: 'E',
       template: '<div class="td-cards" ng-transclude></div>',
       transclude: true,
-      scope: {},
+      scope: {
+        'cardsSpace': '@'
+      },
       controller: ['$scope', '$element', function($scope, $element) {
         var cards;
         var firstCard, secondCard, thirdCard;
@@ -411,7 +413,7 @@
             card = existingCards[i];
             if(!card) continue;
             if(i > 0) {
-              card.style.transform = card.style.webkitTransform = 'translate3d(0, ' + (i * 4) + 'px, 0)';
+              card.style.transform = card.style.webkitTransform = 'translate3d(0, ' + (i * ($scope.cardsSpace || 4)) + 'px, 0)';
             }
             card.style.zIndex = (existingCards.length - i);
           }
