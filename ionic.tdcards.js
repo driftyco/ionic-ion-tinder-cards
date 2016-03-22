@@ -3,21 +3,23 @@
   // Get transform origin poly
   var d = document.createElement('div');
   var transformKeys = ['webkitTransformOrigin', 'transform-origin', '-webkit-transform-origin', 'webkit-transform-origin',
-              '-moz-transform-origin', 'moz-transform-origin', 'MozTransformOrigin', 'mozTransformOrigin'];
+    '-moz-transform-origin', 'moz-transform-origin', 'MozTransformOrigin', 'mozTransformOrigin'
+  ];
 
   var TRANSFORM_ORIGIN = 'webkitTransformOrigin';
-  for(var i = 0; i < transformKeys.length; i++) {
-    if(d.style[transformKeys[i]] !== undefined) {
+  for (var i = 0; i < transformKeys.length; i++) {
+    if (d.style[transformKeys[i]] !== undefined) {
       TRANSFORM_ORIGIN = transformKeys[i];
       break;
     }
   }
 
   var transitionKeys = ['webkitTransition', 'transition', '-webkit-transition', 'webkit-transition',
-              '-moz-transition', 'moz-transition', 'MozTransition', 'mozTransition'];
+    '-moz-transition', 'moz-transition', 'MozTransition', 'mozTransition'
+  ];
   var TRANSITION = 'webkitTransition';
-  for(var i = 0; i < transitionKeys.length; i++) {
-    if(d.style[transitionKeys[i]] !== undefined) {
+  for (var i = 0; i < transitionKeys.length; i++) {
+    if (d.style[transitionKeys[i]] !== undefined) {
       TRANSITION = transitionKeys[i];
       break;
     }
@@ -28,8 +30,7 @@
      * Initialize a card with the given options.
      */
     initialize: function(opts) {
-      opts = ionic.extend({
-      }, opts);
+      opts = ionic.extend({}, opts);
 
       ionic.extend(this, opts);
 
@@ -116,7 +117,7 @@
     swipe: function() {
       this.transitionOut();
     },
-    
+
     /**
      * Snap the card back to its original position
      */
@@ -126,7 +127,8 @@
 
     isUnderThreshold: function() {
       //return true;
-      return Math.abs(this.thresholdAmount) < 0.4;
+      var underThreshold = Math.abs(this.thresholdAmount) < 0.4;
+      return this.thresholdAmount ? underThreshold : true;
     },
     /**
      * Fly the card out or animate back into resting position.
@@ -134,31 +136,31 @@
     transitionOut: function(e) {
       var self = this;
 
-      if(this.isUnderThreshold()) {
+      if (this.isUnderThreshold()) {
         self.onSnapBack(this.x, this.y, this.rotationAngle);
         return;
       }
 
       self.onTransitionOut(self.thresholdAmount);
-      
+
       var angle = Math.atan(e.gesture.deltaX / e.gesture.deltaY);
 
       var dir = this.thresholdAmount < 0 ? -1 : 1;
       var targetX;
-      if(this.x > 0) {
+      if (this.x > 0) {
         targetX = (this.parentWidth / 2) + (this.width);
       } else {
-        targetX = - (this.parentWidth + this.width);
+        targetX = -(this.parentWidth + this.width);
       }
 
       // Target Y is just the "opposite" side of the triangle of targetX as the adjacent edge (sohcahtoa yo)
       var targetY = targetX / Math.tan(angle);
 
       // Fly out
-      var rotateTo = this.rotationAngle;//(this.rotationAngle this.rotationDirection * 0.2));// || (Math.random() * 0.4);
+      var rotateTo = this.rotationAngle; //(this.rotationAngle this.rotationDirection * 0.2));// || (Math.random() * 0.4);
 
-      var duration = 0.3 - Math.min(Math.max(Math.abs(e.gesture.velocityX)/10, 0.05), 0.2);
-      
+      var duration = 0.3 - Math.min(Math.max(Math.abs(e.gesture.velocityX) / 10, 0.05), 0.2);
+
       ionic.requestAnimationFrame(function() {
         self.el.style.transform = self.el.style.webkitTransform = 'translate3d(' + targetX + 'px, ' + targetY + 'px,0) rotate(' + self.rotationAngle + 'rad)';
         self.el.style.transition = self.el.style.webkitTransition = 'all ' + duration + 's ease-in-out';
@@ -186,17 +188,23 @@
           self._transformOriginLeft();
         }
         */
-        ionic.requestAnimationFrame(function() { self._doDragStart(e) });
+        ionic.requestAnimationFrame(function() {
+          self._doDragStart(e);
+        });
       }, this.el);
 
       ionic.onGesture('drag', function(e) {
-        ionic.requestAnimationFrame(function() { self._doDrag(e) });
+        ionic.requestAnimationFrame(function() {
+          self._doDrag(e);
+        });
         // Indicate we want to stop parents from using this
         e.gesture.srcEvent.preventDefault();
       }, this.el);
 
       ionic.onGesture('dragend', function(e) {
-        ionic.requestAnimationFrame(function() { self._doDragEnd(e) });
+        ionic.requestAnimationFrame(function() {
+          self._doDragEnd(e);
+        });
       }, this.el);
     },
 
@@ -214,8 +222,8 @@
     _doDragStart: function(e) {
       e.preventDefault();
       var width = this.el.offsetWidth;
-      var point = window.innerWidth / 2 + this.rotationDirection * (width / 2)
-      var distance = Math.abs(point - e.gesture.touches[0].pageX);// - window.innerWidth/2);
+      var point = window.innerWidth / 2 + this.rotationDirection * (width / 2);
+      var distance = Math.abs(point - e.gesture.touches[0].pageX); // - window.innerWidth/2);
 
       this.touchDistance = distance * 10;
     },
@@ -230,10 +238,10 @@
       this.x = this.startX + (e.gesture.deltaX * 0.8);
       this.y = this.startY + (e.gesture.deltaY * 0.8);
 
-      this.el.style.transform = this.el.style.webkitTransform = 'translate3d(' + this.x + 'px, ' + this.y  + 'px, 0) rotate(' + (this.rotationAngle || 0) + 'rad)';
+      this.el.style.transform = this.el.style.webkitTransform = 'translate3d(' + this.x + 'px, ' + this.y + 'px, 0) rotate(' + (this.rotationAngle || 0) + 'rad)';
 
 
-      this.thresholdAmount = (this.x / (this.parentWidth/2));
+      this.thresholdAmount = (this.x / (this.parentWidth / 2));
 
       var self = this;
       setTimeout(function() {
@@ -259,11 +267,11 @@
       // This is a simple cubic bezier curve.
       // http://cubic-bezier.com/#.11,.67,.41,.99
       var c1 = 0.11,
-          c2 = 0.67,
-          c3 = 0.41,
-          c4 = 0.99;
+        c2 = 0.67,
+        c3 = 0.41,
+        c4 = 0.99;
 
-      return Math.pow((1 - t), 3)*c1 + 3*Math.pow((1 -  t), 2)*t*c2 + 3*(1 - t)*t*t*c3 + Math.pow(t, 3)*c4;
+      return Math.pow((1 - t), 3) * c1 + 3 * Math.pow((1 - t), 2) * t * c2 + 3 * (1 - t) * t * t * c3 + Math.pow(t, 3) * c4;
     };
 
     return {
@@ -286,7 +294,7 @@
           var el = $element[0];
           var leftText = el.querySelector('.no-text');
           var rightText = el.querySelector('.yes-text');
-          
+
           // Force hardware acceleration for animation - better performance on first touch
           el.style.transform = el.style.webkitTransform = 'translate3d(0px, 0px, 0px)';
 
@@ -306,7 +314,9 @@
                   if (self.leftText) self.leftText.style.opacity = 0;
                   if (self.rightText) self.rightText.style.opacity = fadeFn(amt);
                 }
-                $scope.onPartialSwipe({amt: amt});
+                $scope.onPartialSwipe({
+                  amt: amt
+                });
               });
             },
             onSwipeRight: function() {
@@ -336,7 +346,9 @@
                 swipeableCard.onTransitionRight();
               }
               $timeout(function() {
-                $scope.onTransitionOut({amt: amt});
+                $scope.onTransitionOut({
+                  amt: amt
+                });
               });
             },
             onDestroy: function() {
@@ -362,15 +374,15 @@
                 frequency: 15,
                 friction: 250,
                 initialForce: false
-              }) 
+              })
 
               .on('step', function(v) {
-                //Have the element spring over 400px
-                el.style.transform = el.style.webkitTransform = 'translate3d(' + (startX - startX*v) + 'px, ' + (startY - startY*v) + 'px, 0) rotate(' + (startRotation - startRotation*v) + 'rad)';
-                if (rightText) rightText.style.opacity = 0;
-                if (leftText) leftText.style.opacity = 0;
-              })
-              .start();
+                  //Have the element spring over 400px
+                  el.style.transform = el.style.webkitTransform = 'translate3d(' + (startX - startX * v) + 'px, ' + (startY - startY * v) + 'px, 0) rotate(' + (startRotation - startRotation * v) + 'rad)';
+                  if (rightText) rightText.style.opacity = 0;
+                  if (leftText) leftText.style.opacity = 0;
+                })
+                .start();
 
               $timeout(function() {
                 $scope.onSnapBack();
@@ -385,9 +397,9 @@
           });
           $scope.$parent.swipeCard = swipeableCard;
 
-        }
+        };
       }
-    }
+    };
   }])
 
   .directive('tdCards', ['$rootScope', '$timeout', function($rootScope, $timeout) {
@@ -407,10 +419,10 @@
         var sortCards = function() {
           existingCards = $element[0].querySelectorAll('td-card');
 
-          for(i = 0; i < existingCards.length; i++) {
+          for (i = 0; i < existingCards.length; i++) {
             card = existingCards[i];
-            if(!card) continue;
-            if(i > 0) {
+            if (!card) continue;
+            if (i > 0) {
               card.style.transform = card.style.webkitTransform = 'translate3d(0, ' + (i * 4) + 'px, 0)';
             }
             card.style.zIndex = (existingCards.length - i);
@@ -438,7 +450,7 @@
           thirdCard && bringCardUp(thirdCard, amt, 8);
         };
       }]
-    }
+    };
   }])
 
   .factory('TDCardDelegate', ['$rootScope', function($rootScope) {
@@ -449,7 +461,7 @@
       getSwipeableCard: function($scope) {
         return $scope.swipeCard;
       }
-    }
+    };
   }]);
 
 })(window.ionic);
