@@ -211,7 +211,12 @@
       this.rotationDirection = -1;
     },
 
+    isDragDisabled: function() { // Can be overriden
+      return false;
+    },
+
     _doDragStart: function(e) {
+      if (this.isDragDisabled()) return;
       e.preventDefault();
       var width = this.el.offsetWidth;
       var point = window.innerWidth / 2 + this.rotationDirection * (width / 2)
@@ -221,6 +226,7 @@
     },
 
     _doDrag: function(e) {
+      if (this.isDragDisabled()) return;
       e.preventDefault();
 
       var o = e.gesture.deltaX / -1000;
@@ -241,6 +247,7 @@
       });
     },
     _doDragEnd: function(e) {
+      if (this.isDragDisabled()) return;
       this.transitionOut(e);
     }
   });
@@ -279,7 +286,8 @@
         onTransitionOut: '&',
         onPartialSwipe: '&',
         onSnapBack: '&',
-        onDestroy: '&'
+        onDestroy: '&',
+        dragDisabled: '&'
       },
       compile: function(element, attr) {
         return function($scope, $element, $attr, swipeCards) {
@@ -295,6 +303,9 @@
             el: el,
             leftText: leftText,
             rightText: rightText,
+            isDragDisabled: function() {
+              return $scope.dragDisabled();
+            },
             onPartialSwipe: function(amt) {
               swipeCards.partial(amt);
               var self = this;
@@ -365,8 +376,10 @@
               }) 
 
               .on('step', function(v) {
+                var xPos = startX - startX*v;
+                swipeCards.partial(xPos / (swipeableCard.parentWidth / 2));
                 //Have the element spring over 400px
-                el.style.transform = el.style.webkitTransform = 'translate3d(' + (startX - startX*v) + 'px, ' + (startY - startY*v) + 'px, 0) rotate(' + (startRotation - startRotation*v) + 'rad)';
+                el.style.transform = el.style.webkitTransform = 'translate3d(' + xPos + 'px, ' + (startY - startY*v) + 'px, 0) rotate(' + (startRotation - startRotation*v) + 'rad)';
                 if (rightText) rightText.style.opacity = 0;
                 if (leftText) leftText.style.opacity = 0;
               })
@@ -395,8 +408,13 @@
       restrict: 'E',
       template: '<div class="td-cards" ng-transclude></div>',
       transclude: true,
-      scope: {},
+      scope: {
+        maxStackSize: '=', // Max visible number of cards
+        cardPixelOffset: '=' // Offset of each card
+      },
       controller: ['$scope', '$element', function($scope, $element) {
+        var PIXEL_OFFSET = $scope.cardPixelOffset || 4;
+
         var cards;
         var firstCard, secondCard, thirdCard;
 
@@ -411,7 +429,8 @@
             card = existingCards[i];
             if(!card) continue;
             if(i > 0) {
-              card.style.transform = card.style.webkitTransform = 'translate3d(0, ' + (i * 4) + 'px, 0)';
+              var cardOffsetIndex = ($scope.maxStackSize && ($scope.maxStackSize - 1) < i) ? $scope.maxStackSize - 1 : i;
+              card.style.transform = card.style.webkitTransform = 'translate3d(0, ' + (cardOffsetIndex * PIXEL_OFFSET) + 'px, 0)';
             }
             card.style.zIndex = (existingCards.length - i);
           }
@@ -424,18 +443,18 @@
         var bringCardUp = function(card, amt, max) {
           var position, newTop;
           position = card.style.transform || card.style.webkitTransform;
-          newTop = Math.max(0, Math.min(max, max - (max * Math.abs(amt))));
+          newTop = Math.max(0, Math.max(max - PIXEL_OFFSET, max - (PIXEL_OFFSET * Math.abs(amt))));
           card.style.transform = card.style.webkitTransform = 'translate3d(0, ' + newTop + 'px, 0)';
         };
 
         this.partial = function(amt) {
           cards = $element[0].querySelectorAll('td-card');
           firstCard = cards[0];
-          secondCard = cards.length > 2 && cards[1];
-          thirdCard = cards.length > 3 && cards[2];
+          secondCard = cards.length >= 2 && cards[1];
+          thirdCard = cards.length >= 3 && cards[2];
 
-          secondCard && bringCardUp(secondCard, amt, 4);
-          thirdCard && bringCardUp(thirdCard, amt, 8);
+          secondCard && bringCardUp(secondCard, amt, PIXEL_OFFSET);
+          thirdCard && bringCardUp(thirdCard, amt, PIXEL_OFFSET * 2);
         };
       }]
     }
